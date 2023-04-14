@@ -29,57 +29,21 @@ $.ajax({
         pitch: 0
     });
 
+    data.features.forEach(function (fatalCrash) {
+        if (fatalCrash.geometry === null) return
+        // create the popup
+        const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+            `${fatalCrash.properties['number_of_pedestrians_killed']} pedestrian(s) was(were) killed by a ${fatalCrash.properties['vehicle_type_code1']} due to ${fatalCrash.properties['contributing_factor_vehicle_1']}`
+        );
 
-    //maybe actually use the GEOJSON?
-    // think about a cluster layout
-    // data.features.forEach(function (fatalCrash) {
-    //     if (fatalCrash.geometry === null) return
-    //     // create the popup
-    //     const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-    //         `${fatalCrash.properties['number_of_pedestrians_killed']} pedestrian(s) was(were) killed by a ${fatalCrash.properties['vehicle_type_code1']} due to ${fatalCrash.properties['contributing_factor_vehicle_1']}`
-    //     );
-
-    //     // map center point and add geometry
-    //     new mapboxgl.Marker({
-    //         color: "#00000"
-    //     })
-    //         .setLngLat([fatalCrash.geometry.coordinates[0], fatalCrash.geometry.coordinates[1]])
-    //         .setPopup(popup)
-    //         .addTo(map);
-    // })
-
-    map.on('load', function () {
-
-        console.log(map.getStyle().layers)
-
-
-        map.addSource('my-points', {
-            type: 'geojson',
-            data: data
+        // map center point and add geometry
+        new mapboxgl.Marker({
+            color: "#00000"
         })
-
-        map.addLayer({
-            id: 'circle-my-points',
-            type: 'circle',
-            source: 'my-points',
-            paint: {
-                'circle-opacity' : 0.6,
-                'circle-color': 'red'
-            },
-        })
-
-        console.log(map.getStyle().layers)
-
+            .setLngLat([fatalCrash.geometry.coordinates[0], fatalCrash.geometry.coordinates[1]])
+            .setPopup(popup)
+            .addTo(map);
     })
-
-    map.on('click', 'circle-my-points', (e)=>{
-        new mapboxgl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(e.features[0].properties.number_of_persons_killed)
-        .addTo(map)
-    });
-
-
 });
 
 
